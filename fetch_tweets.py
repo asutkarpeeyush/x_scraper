@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from fake_useragent import UserAgent
 
 USERNAME = "baloro6494"
 PASSWORD = "baloro1994"
@@ -13,15 +14,19 @@ URL = f"https://twitter.com/search?q=from%3A%40{TO_FETCH_USER}%20-filter%3Aretwe
 
 
 def fetch_tweets_api():
-    # TODO: Try https://community.render.com/t/chromedriver-is-assuming-that-chrome-has-crashed/13237/7 for headless
+    # Based on https://community.render.com/t/chromedriver-is-assuming-that-chrome-has-crashed/13237/7
     # Open chrome in headless mode
-    # driver_options = webdriver.ChromeOptions()
-    # driver_options.add_argument("--headless=new")
-    # driver_options.add_argument("--window-size=1024,600")
-    # driver_options.add_argument("--allow-insecure-localhost")
-    # driver_options.add_argument("--disable-gpu");
-    # driver_options.add_argument("--no-sandbox");
-    driver = webdriver.Chrome() #type: WebDriver
+    ua = UserAgent()
+    user_agent = ua.random
+    options = webdriver.ChromeOptions()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--user-agent={}'.format(user_agent))
+    driver = webdriver.Chrome(options=options) #type: WebDriver
     driver.set_page_load_timeout(30)
     driver.get(URL)
 
