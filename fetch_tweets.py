@@ -6,9 +6,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from fake_useragent import UserAgent
+from selenium.common.exceptions import TimeoutException
 
 USERNAME = "baloro6494"
 PASSWORD = "baloro1994"
+EMAIL = "baloro6494@ubinert.com"
 TO_FETCH_USER = "alveus_dweller"
 URL = f"https://twitter.com/search?q=from%3A%40{TO_FETCH_USER}%20-filter%3Aretweets%20-filter%3Areplies%20-filter%3Alinks"
 
@@ -27,7 +29,6 @@ def fetch_tweets_api():
     options.add_argument('--disable-gpu')
     options.add_argument('--user-agent={}'.format(user_agent))
     driver = webdriver.Chrome(options=options) #type: WebDriver
-    driver.set_page_load_timeout(30)
     driver.get(URL)
 
     ##### Wait till login page appears ####
@@ -53,6 +54,22 @@ def fetch_tweets_api():
             button_ele.click()
             break
 
+
+    # At times, the email page comes up again, so wait like ~15 seconds for it.
+    try:
+        email_ele = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='email']"))
+        )
+        if username_ele:
+            email_ele.send_keys(EMAIL)
+            button_elements = driver.find_elements(By.CSS_SELECTOR, "div[role='button']") #type: list[WebElement]
+            for button_ele in button_elements:
+                if button_ele.text == "Next": # Next button
+                    button_ele.click()
+                    break
+    except TimeoutException:
+        # This is ok since the email page is intermittent.
+        pass
 
     #### Wait till filtered timeline page appear ####
     WebDriverWait(driver, 50).until(
