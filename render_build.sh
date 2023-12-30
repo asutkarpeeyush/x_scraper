@@ -16,7 +16,8 @@ else
   echo "...Using Chrome from cache"
 fi
 
-# be sure to add Chromes location to the PATH as part of your Start Command
-export PATH="${PATH}:/opt/render/project/.render/chrome/opt/google/chrome"
-
 pip install -r requirements.txt
+
+# be sure to add Chromes location to the PATH as part of your Start Command
+# This has to be added to "Start command" in render settings
+# export PATH="${PATH}:/opt/render/project/.render/chrome/opt/google/chrome"
