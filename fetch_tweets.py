@@ -7,6 +7,8 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 
 USERNAME = "baloro6494"
 PASSWORD = "baloro1994"
@@ -22,7 +24,8 @@ def fetch_tweets_api():
     # driver_options.add_argument("--allow-insecure-localhost")
     # driver_options.add_argument("--disable-gpu");
     # driver_options.add_argument("--no-sandbox");
-    driver = webdriver.Chrome() #type: WebDriver
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service) #type: WebDriver
     driver.get(URL)
 
     ##### Wait till login page appears ####
