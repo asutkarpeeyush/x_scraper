@@ -15,7 +15,7 @@ class HelloWorld(Resource):
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
 
-api.add_resource(HelloWorld, '/')
+api.add_resource(HelloWorld, '/fetch_tweets')
 
 if __name__ == '__main__':
     app.run()
