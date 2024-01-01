@@ -18,8 +18,6 @@ URL = f"https://twitter.com/search?q=from%3A%40{TO_FETCH_USER}%20-filter%3Aretwe
 def fetch_tweets_api():
     # Based on https://community.render.com/t/chromedriver-is-assuming-that-chrome-has-crashed/13237/7
     # Open chrome in headless mode
-    ua = UserAgent()
-    user_agent = ua.random
     options = webdriver.ChromeOptions()
     options.add_argument('--no-sandbox')
     options.add_argument('--headless')
@@ -27,7 +25,7 @@ def fetch_tweets_api():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-gpu')
-    options.add_argument('--user-agent={}'.format(user_agent))
+    options.add_argument('--user-agent={}'.format('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'))
     driver = webdriver.Chrome(options=options) #type: WebDriver
     driver.get(URL)
 
@@ -57,7 +55,7 @@ def fetch_tweets_api():
 
     # At times, the email page comes up again, so wait like ~20 seconds for it.
     try:
-        email_ele = WebDriverWait(driver, 50).until(
+        email_ele = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='email']"))
         )
         if email_ele:
@@ -73,8 +71,11 @@ def fetch_tweets_api():
 
 
     #### Wait till filtered timeline page appear ####
+    # WebDriverWait(driver, 50).until(
+    #     EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Timeline: Search timeline']"))
+    # )
     WebDriverWait(driver, 50).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Timeline: Search timeline']"))
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-testid='tweetText']"))
     )
     elements = driver.find_elements(By.CSS_SELECTOR , "div[data-testid='tweetText']") #type: list[WebElement]
     tweets = []
