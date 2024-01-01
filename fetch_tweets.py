@@ -55,12 +55,12 @@ def fetch_tweets_api():
             break
 
 
-    # At times, the email page comes up again, so wait like ~15 seconds for it.
+    # At times, the email page comes up again, so wait like ~20 seconds for it.
     try:
         email_ele = WebDriverWait(driver, 50).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='email']"))
         )
-        if username_ele:
+        if email_ele:
             email_ele.send_keys(EMAIL)
             button_elements = driver.find_elements(By.CSS_SELECTOR, "div[role='button']") #type: list[WebElement]
             for button_ele in button_elements:
@@ -68,11 +68,12 @@ def fetch_tweets_api():
                     button_ele.click()
                     break
     except TimeoutException:
+        print("Timeout exception surpassed")
         pass
 
 
     #### Wait till filtered timeline page appear ####
-    WebDriverWait(driver, 100).until(
+    WebDriverWait(driver, 50).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Timeline: Search timeline']"))
     )
     elements = driver.find_elements(By.CSS_SELECTOR , "div[data-testid='tweetText']") #type: list[WebElement]
