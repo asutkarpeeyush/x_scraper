@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from fake_useragent import UserAgent
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
 
 USERNAME = "baloro6494"
 PASSWORD = "baloro1994"
@@ -25,7 +25,7 @@ def fetch_tweets_api():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-extensions')
     options.add_argument('--disable-gpu')
-    options.add_argument('--user-agent={}'.format('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'))
+    # options.add_argument('--user-agent={}'.format('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'))
     driver = webdriver.Chrome(options=options) #type: WebDriver
     driver.get(URL)
 
@@ -36,10 +36,12 @@ def fetch_tweets_api():
     ) #type: WebElement
     username_ele.send_keys(USERNAME)
     button_elements = driver.find_elements(By.CSS_SELECTOR, "div[role='button']") #type: list[WebElement]
-    for button_ele in button_elements:
-        if button_ele.text == "Next": # Next button
-            button_ele.click()
+    for idx in range(len(button_elements)):
+        if button_elements[idx].text == "Next": # Next button
+            button_elements[idx].click()
             break
+            # except StaleElementReferenceException:
+            #     button_elements = driver.find_elements(By.CSS_SELECTOR, "div[role='button']")
 
     # password page
     password_ele = WebDriverWait(driver, 50).until(
